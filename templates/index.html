@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload to Flask App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container {  margin: auto; }
+        .img-container {margin-top: 20px;  display: flex;  align-items: center; gap:100px }
+        #response { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Image</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input id="img-input" type="file" name="image" accept="image/*" required>
+            <button type="submit">Send</button>
+        </form>
+        <div class="img-container">
+            <div style="width:600px">
+                <img id="preview" style="width: 100%; object-fit: contain;"  src=""></img>
+            </div>
+            <div id="response" style="width:600px"></div>
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const imageInput = document.getElementById('img-input');
+        const responseDiv = document.getElementById('response');
+
+        imageInput.addEventListener('change', function() {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            responseDiv.textContent = "Uploading...";
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000//upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!res.ok) throw new Error('Server error');
+                const blob = await res.blob();
+                const imgUrl = URL.createObjectURL(blob);
+                responseDiv.innerHTML = `<img src="${imgUrl}" alt="Processed Image" style="max-width:100%;">`;
+            } catch (err) {
+                responseDiv.textContent = "Error: " + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
