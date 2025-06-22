@@ -18,8 +18,8 @@ This is a simple Flask web application that allows users to upload an image and 
 - Return and display the processed image dynamically.
 
 Note: 
-python -m venv venv
-source venv/bin/activate
+- python -m venv venv
+- source venv/bin/activate
 
 Install all dependencies with:
 - pip install -r requirements.txt
